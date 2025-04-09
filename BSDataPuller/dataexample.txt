@@ -1,0 +1,133 @@
+ws://localhost:2946/BSDataPuller/MapData
+
+{"GameVersion":"1.39.1_1715","PluginVersion":"2.1.15","InLevel":false,"LevelPaused":false,"LevelFinished":false,"LevelFailed":false,"LevelQuit":false,"Hash":null,"LevelID":null,"SongName":"","SongSubName":"","SongAuthor":"","Mapper":"","Mappers":[],"Lighters":[],"ContentRating":"","BSRKey":null,"CoverImage":null,"Duration":0,"MapType":"","Environment":"","Difficulty":"","CustomDifficultyLabel":null,"BPM":0,"NJS":0.0,"Modifiers":{"NoFailOn0Energy":false,"OneLife":false,"FourLives":false,"NoBombs":false,"NoWalls":false,"NoArrows":false,"GhostNotes":false,"DisappearingArrows":false,"SmallNotes":false,"ProMode":false,"StrictAngles":false,"ZenMode":false,"SlowerSong":false,"FasterSong":false,"SuperFastSong":false},"ModifiersMultiplier":1.0,"PracticeMode":false,"PracticeModeModifiers":{"SongSpeedMul":0.0,"StartInAdvanceAndClearNotes":false,"SongStartTime":0.0},"PP":0.0,"Star":0.0,"RankedState":{"Ranked":false,"Qualified":false,"BeatleaderQualified":false,"ScoresaberQualified":false,"BeatleaderRanked":false,"ScoresaberRanked":false,"BeatleaderStars":0.0,"ScoresaberStars":0.0},"Rating":null,"ColorScheme":{"SaberAColor":null,"SaberBColor":null,"ObstaclesColor":null,"EnvironmentColor0":null,"EnvironmentColor1":null,"EnvironmentColor0Boost":null,"EnvironmentColor1Boost":null},"IsMultiplayer":false,"MultiplayerLobbyMaxSize":0,"MultiplayerLobbyCurrentSize":0,"PreviousRecord":0,"PreviousBSR":null,"UnixTimestamp":1744128544770}
+
+{
+  "GameVersion": "1.39.1_1715",
+  "PluginVersion": "2.1.15",
+  "InLevel": true,
+  "LevelPaused": false,
+  "LevelFinished": false,
+  "LevelFailed": false,
+  "LevelQuit": false,
+  "Hash": "684A8001E7B3C7A3A365BAEB00B711AD62A6F232",
+  "LevelID": null,
+  "SongName": "Night of Knights",
+  "SongSubName": "(Camellia's \"Once Upon A [K]Night\" Remix)",
+  "SongAuthor": "beatMARIO",
+  "Mapper": "Komeijisan, Shosa",
+  "Mappers": [
+    "Komeijisan",
+    "Shosa"
+  ],
+  "Lighters": [],
+  "ContentRating": "Safe",
+  "BSRKey": "3fa76",
+  "CoverImage": "https://eu.cdn.beatsaver.com/684a8001e7b3c7a3a365baeb00b711ad62a6f232.jpg",
+  "Duration": 280,
+  "MapType": "Standard",
+  "Environment": "DefaultEnvironment",
+  "Difficulty": "Expert",
+  "CustomDifficultyLabel": "phantom \"Lunar Clock\"",
+  "BPM": 188,
+  "NJS": 17,
+  "Modifiers": {
+    "NoFailOn0Energy": true,
+    "OneLife": false,
+    "FourLives": false,
+    "NoBombs": false,
+    "NoWalls": false,
+    "NoArrows": false,
+    "GhostNotes": false,
+    "DisappearingArrows": false,
+    "SmallNotes": false,
+    "ProMode": false,
+    "StrictAngles": false,
+    "ZenMode": false,
+    "SlowerSong": false,
+    "FasterSong": false,
+    "SuperFastSong": false
+  },
+  "ModifiersMultiplier": 1,
+  "PracticeMode": false,
+  "PracticeModeModifiers": {
+    "SongSpeedMul": 1,
+    "StartInAdvanceAndClearNotes": false,
+    "SongStartTime": 0
+  },
+  "PP": 0,
+  "Star": 0,
+  "RankedState": {
+    "Ranked": true,
+    "Qualified": false,
+    "BeatleaderQualified": false,
+    "ScoresaberQualified": false,
+    "BeatleaderRanked": true,
+    "ScoresaberRanked": false,
+    "BeatleaderStars": 7.179999828338623,
+    "ScoresaberStars": 0
+  },
+  "Rating": 84.56114,
+  "ColorScheme": {
+    "SaberAColor": {
+      "HexCode": "#B83A2E",
+      "Red": 184,
+      "Green": 58,
+      "Blue": 46,
+      "Alpha": 1
+    },
+    "SaberBColor": {
+      "HexCode": "#1FB2B0",
+      "Red": 31,
+      "Green": 178,
+      "Blue": 176,
+      "Alpha": 1
+    },
+    "ObstaclesColor": {
+      "HexCode": "#9B00FF",
+      "Red": 155,
+      "Green": 0,
+      "Blue": 255,
+      "Alpha": 1
+    },
+    "EnvironmentColor0": {
+      "HexCode": "#FFB340",
+      "Red": 255,
+      "Green": 179,
+      "Blue": 64,
+      "Alpha": 1
+    },
+    "EnvironmentColor1": {
+      "HexCode": "#8554D1",
+      "Red": 133,
+      "Green": 84,
+      "Blue": 209,
+      "Alpha": 1
+    },
+    "EnvironmentColor0Boost": {
+      "HexCode": "#DB007A",
+      "Red": 219,
+      "Green": 0,
+      "Blue": 122,
+      "Alpha": 1
+    },
+    "EnvironmentColor1Boost": {
+      "HexCode": "#00D1CD",
+      "Red": 0,
+      "Green": 209,
+      "Blue": 205,
+      "Alpha": 1
+    }
+  },
+  "IsMultiplayer": false,
+  "MultiplayerLobbyMaxSize": 0,
+  "MultiplayerLobbyCurrentSize": 0,
+  "PreviousRecord": 1308500,
+  "PreviousBSR": null,
+  "UnixTimestamp": 1744129431135
+}
+
+ws://localhost:2946/BSDataPuller/LiveData
+
+{"Score":0,"ScoreWithMultipliers":0,"MaxScore":0,"MaxScoreWithMultipliers":0,"Rank":"SSS","FullCombo":true,"NotesSpawned":0,"Combo":0,"Misses":0,"Accuracy":100.0,"BlockHitScore":{"PreSwing":0,"PostSwing":0,"CenterSwing":0},"PlayerHealth":50.0,"ColorType":-1,"CutDirection":9,"TimeElapsed":0,"EventTrigger":0,"UnixTimestamp":1744128594624}
+
