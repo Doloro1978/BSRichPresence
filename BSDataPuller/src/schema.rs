@@ -113,16 +113,17 @@ impl BSMetadata {
         let client = Client::default();
 
         // Attempt to upgrade to WebSocket
-        let response = client
-            .get("ws://127.0.0.1:2946/BSDataPuller/MapData")
-            .upgrade()
-            .send()
-            .await
-            .map_err(|e| {
-                eprintln!("Failed to send WebSocket upgrade request: {}", e);
-                e
-            })
-            .unwrap();
+        let response: UpgradeResponse;
+        loop {
+            let response = client
+                .get("ws://127.0.0.1:2946/BSDataPuller/MapData")
+                .upgrade()
+                .send()
+                .await
+                .map_err(continue);
+            break;
+        }
+        let response: UpgradeResponse = response;
 
         // Transform into WebSocket
         match response.into_websocket().await {
