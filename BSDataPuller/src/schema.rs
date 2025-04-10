@@ -108,22 +108,31 @@ pub struct Color {
     pub Alpha: f32,
 }
 
+use std::time::Duration;
 impl BSMetadata {
-    pub async fn get() -> Result<BSMetadata> {
+    async fn connection() -> UpgradeResponse {
         let client = Client::default();
 
-        // Attempt to upgrade to WebSocket
         let response: UpgradeResponse;
         loop {
             let response = client
                 .get("ws://127.0.0.1:2946/BSDataPuller/MapData")
                 .upgrade()
                 .send()
-                .await
-                .map_err(continue);
-            break;
+                .await;
+            if response.is_ok() {
+                return response.unwrap();
+            } else {
+                print!("Unable to connect, retrying..");
+                tokio::time::sleep(Duration::from_secs(1));
+                continue;
+            };
         }
-        let response: UpgradeResponse = response;
+    }
+    pub async fn get() -> Result<BSMetadata> {
+        // Attempt to upgrade to WebSocket
+
+        let response = BSMetadata::connection().await;
 
         // Transform into WebSocket
         match response.into_websocket().await {
