@@ -109,8 +109,9 @@ pub struct Color {
 }
 
 use std::time::Duration;
+use tracing::info;
 impl BSMetadata {
-    async fn connection() -> UpgradeResponse {
+    pub async fn connection() -> UpgradeResponse {
         let client = Client::default();
 
         let response: UpgradeResponse;
@@ -123,8 +124,8 @@ impl BSMetadata {
             if response.is_ok() {
                 return response.unwrap();
             } else {
-                print!("Unable to connect, retrying..");
-                tokio::time::sleep(Duration::from_secs(1));
+                info!("Unable to connect, retrying..");
+                tokio::time::sleep(Duration::from_secs(1)).await;
                 continue;
             };
         }
@@ -137,7 +138,7 @@ impl BSMetadata {
         // Transform into WebSocket
         match response.into_websocket().await {
             Ok((mut ws)) => {
-                println!("Successfully connected to WebSocket.");
+                info!("Successfully connected to WebSocket.");
 
                 // Read the initial message from the WebSocket
                 if let Some(Ok(text)) = ws.next().await {

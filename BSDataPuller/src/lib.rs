@@ -9,6 +9,7 @@ use tokio::sync::Mutex;
 pub struct BSData {
     pub gameData: Arc<Mutex<GameData>>,
     pub levelData: Arc<Mutex<LevelData>>,
+    pub gamerunning: Arc<Mutex<u64>>,
 }
 
 #[derive(Debug)]
@@ -65,9 +66,32 @@ impl LevelDataInner {
 pub struct refreshBSData {
     Data: Arc<Mutex<BSData>>,
 }
-
+use std::time::Duration;
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
+use tokio::time::sleep;
+use tracing::info;
 impl BSData {
+    pub async fn is_game_running(&self) -> bool {
+        let lastMsgTimestamp = self.gamerunning.clone().lock().await.clone();
+
+        let start = SystemTime::now();
+        let since_the_epoch = start
+            .duration_since(UNIX_EPOCH)
+            .expect("Time went backwards");
+
+        if lastMsgTimestamp < (since_the_epoch.as_secs() + 100) {
+            info!(lastMsgTimestamp);
+            info!("{}", since_the_epoch.as_secs() + 100);
+            sleep(Duration::from_secs(1)).await;
+            return false;
+        } else {
+            return true;
+        }
+    }
+    //pub fn
     pub fn from_raw(data: BSMetadata) -> BSData {
+        //info!(U);
         let gameData = GameData {
             GameVersion: data.GameVersion,
             PluginVersion: data.PluginVersion,
@@ -75,10 +99,10 @@ impl BSData {
         let mut levelData = LevelData {
             LevelDataInner: None,
         };
-        print!(
-            "{}, {}, {}, {}",
-            data.InLevel, data.LevelFinished, data.LevelPaused, data.LevelQuit
-        );
+        //print!(
+        //    "{}, {}, {}, {}",
+        //    data.InLevel, data.LevelFinished, data.LevelPaused, data.LevelQuit
+        //);
         if data.InLevel {
             levelData = LevelData {
                 LevelDataInner: Some(LevelDataInner {
@@ -103,6 +127,7 @@ impl BSData {
         BSData {
             gameData: Arc::new(Mutex::new(gameData)),
             levelData: Arc::new(Mutex::new(levelData)),
+            gamerunning: Arc::new(Mutex::new(data.UnixTimestamp)),
         }
     }
 }
