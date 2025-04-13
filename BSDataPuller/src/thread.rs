@@ -7,8 +7,10 @@ use reqwest_websocket::Message;
 use reqwest_websocket::Message::Close;
 use reqwest_websocket::RequestBuilderExt;
 use std::mem;
+use std::time::Duration;
 use tokio::spawn;
 use tokio::sync;
+use tracing::debug;
 use tracing::error;
 use tracing::info;
 
@@ -29,7 +31,9 @@ impl BSData {
 
             let mut ws = response.into_websocket().await.unwrap();
             loop {
+                debug!("Hit-msg-processing-loop");
                 if let Some(Ok(msg)) = ws.next().await {
+                    debug!("Hit-msg-processing");
                     if let Message::Text(msg) = msg {
                         let new =
                             BSData::from_raw(serde_json::from_str::<BSMetadata>(&msg).unwrap());
@@ -62,6 +66,7 @@ impl BSData {
                         //drop(levelDataLock)
                         //ws.flush();
                     } else {
+                        error!("Unable to handle message : \n{:#?}", msg);
                         //if let Message::Close
                         //if let Message::Binary(msg) = msg {
                         //}
@@ -73,8 +78,12 @@ impl BSData {
                         continue;
                     };
                     //print!(msg);
+                } else {
+                    error!("Unable to await websocket.. killing thread.");
+                    break;
                 }
             }
+            //info!("Goodbye..");
         });
 
         // do we need to update gameData?
