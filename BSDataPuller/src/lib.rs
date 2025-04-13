@@ -2,7 +2,10 @@ pub mod schema;
 pub mod schemaLivedata;
 pub mod thread;
 use crate::schema::*;
+use futures_util::FutureExt;
+use futures_util::poll;
 use std::sync::Arc;
+use tokio::pin;
 use tokio::sync::Mutex;
 
 #[derive(Debug)]
@@ -69,12 +72,38 @@ impl LevelDataInner {
 pub struct refreshBSData {
     Data: Arc<Mutex<BSData>>,
 }
+use reqwest::Client;
+use reqwest_websocket::RequestBuilderExt;
 use std::time::Duration;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 use tokio::time::sleep;
 use tracing::info;
 impl BSData {
+    pub async fn ping() -> bool {
+        // Constructs a new connection and pings and drop the connection.
+        let client = Client::builder()
+            .timeout(Duration::from_secs(5))
+            .build()
+            .unwrap();
+        let connection = client
+            .get("http://127.0.0.1:2946")
+            .timeout(Duration::from_secs(5))
+            .send()
+            .await;
+        //tokio::time::sleep(Duration::from_secs(5)).await;
+        //pin!(connection)
+        match connection {
+            Ok(_) => {
+                //info!("{:#?}", reply);
+                return true;
+            }
+            Err(_) => {
+                //info!("{:#?}", e);
+                return false;
+            }
+        }
+    }
     pub async fn is_game_running(&self) -> bool {
         let lastMsgTimestamp = self.gamerunning.clone().lock().await.clone();
 

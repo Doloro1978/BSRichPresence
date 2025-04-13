@@ -2,7 +2,9 @@ use crate::BSData;
 use crate::BSMetadata;
 use futures_util::StreamExt;
 use reqwest::Client;
+use reqwest_websocket;
 use reqwest_websocket::Message;
+use reqwest_websocket::Message::Close;
 use reqwest_websocket::RequestBuilderExt;
 use std::mem;
 use tokio::spawn;
@@ -60,6 +62,7 @@ impl BSData {
                         //drop(levelDataLock)
                         //ws.flush();
                     } else {
+                        //if let Message::Close
                         //if let Message::Binary(msg) = msg {
                         //}
                         //print!("{:#?}", msg);

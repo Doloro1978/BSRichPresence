@@ -39,22 +39,33 @@ async fn main() {
         Err(e) => info!("Couldn't set activity: {}", e),
     }
 
-    loop {
-        tokio::time::sleep(Duration::from_secs(1)).await;
-        let mut activity = bsdata.to_activity().await;
-        activity.timestamps.replace(Timestamps {
-            start: Some(started_at.clone().as_secs() as i64),
-            ..Default::default()
-        });
-        let activity_packet = Packet::new_activity(Some(&activity), None);
-        client.send_and_wait(activity_packet).unwrap();
-        info!("awa");
-        let gamerunning = bsdata.is_game_running().await;
-        if !gamerunning {
-            exit(0);
+    tokio::spawn(async {
+        loop {
+            // if unable to ping for any reason, exit, assuming game has quit.
+            // this spawns a new client / connection each time, kinda expensive
+            if !BSData::ping().await {
+                exit(0);
+            }
+            info!("pinged");
+            tokio::time::sleep(Duration::from_secs(3)).await;
         }
-        //print!("{}", aw);
-        //print!("{:#?}", awa)
-        //print!()
-    }
+    });
+
+    tokio::spawn(async move {
+        loop {
+            tokio::time::sleep(Duration::from_secs(1)).await;
+            let mut activity = bsdata.to_activity().await;
+            activity.timestamps.replace(Timestamps {
+                start: Some(started_at.clone().as_secs() as i64),
+                ..Default::default()
+            });
+            let activity_packet = Packet::new_activity(Some(&activity), None);
+            client.send_and_wait(activity_packet).unwrap();
+            //info!("awa");
+            //print!("{}", aw);
+            //print!("{:#?}", awa)
+            //print!()
+        }
+    });
+    loop {}
 }
