@@ -8,6 +8,9 @@ use discordipc::Client;
 use discordipc::activity::*;
 use discordipc::packet::*;
 use std::process::exit;
+use std::sync::Arc;
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
 use tokio::time::Duration;
 use tracing::info;
 
@@ -25,6 +28,11 @@ async fn main() {
     client.connect_and_wait().unwrap();
     let activity = Activity::new().details("Some activity");
     let activity_packet = Packet::new_activity(Some(&activity), None);
+    let start = SystemTime::now();
+    let startedAt = start
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards");
+    let started_at = Arc::new(startedAt);
 
     match client.send_and_wait(activity_packet).unwrap().filter() {
         Ok(_packet) => info!("Activity has been set!"),
@@ -33,7 +41,11 @@ async fn main() {
 
     loop {
         tokio::time::sleep(Duration::from_secs(1)).await;
-        let activity = bsdata.to_activity().await;
+        let mut activity = bsdata.to_activity().await;
+        activity.timestamps.replace(Timestamps {
+            start: Some(started_at.clone().as_secs() as i64),
+            ..Default::default()
+        });
         let activity_packet = Packet::new_activity(Some(&activity), None);
         client.send_and_wait(activity_packet).unwrap();
         info!("awa");

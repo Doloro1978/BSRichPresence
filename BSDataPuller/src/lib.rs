@@ -36,7 +36,10 @@ pub struct LevelDataInner {
     pub SongAuthor: String,
     Mapper: String,
     pub CoverImage: String,
+    pub Star: f32,
+    pub Diff: String,
 }
+
 #[derive(Debug)]
 pub struct LevelData {
     pub LevelDataInner: Option<LevelDataInner>,
@@ -120,6 +123,14 @@ impl BSData {
                         }
                     },
                     Mapper: data.Mapper,
+                    Star: data.RankedState.BeatleaderStars,
+                    Diff: {
+                        if let Some(DiffLabel) = data.CustomDifficultyLabel {
+                            DiffLabel
+                        } else {
+                            data.Difficulty
+                        }
+                    },
                 }),
             };
         }

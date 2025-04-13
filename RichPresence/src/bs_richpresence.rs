@@ -5,6 +5,7 @@ use BSDataPuller::schema::BSMetadata;
 use discordipc::Client;
 use discordipc::activity::*;
 use discordipc::packet::*;
+use tracing::info;
 
 use BSDataPuller::LevelDataInner;
 
@@ -64,11 +65,22 @@ impl richpresence for BSData {
         activity
             .assets
             .small_image
-            .replace("https://pixsector.com/cache/8955ccde/avea0c6d1234636825bd6.png".to_owned());
-        activity
-            .assets
-            .small_text
-            .replace("Playing Song".to_owned());
+            .replace("https://raw.githubusercontent.com/Doloro1978/BSRichPresence/refs/heads/master/Assets/RankedIcon.png".to_owned());
+
+        let mut diffString: String = String::new();
+        info!(awaw.Star);
+        if awaw.Star > 0.0 {
+            diffString.push_str("Ranked");
+            diffString.push_str(" | ");
+            let mut pp = awaw.Star.to_string();
+            pp.push_str(" Stars");
+            diffString.push_str(&pp)
+        } else {
+            diffString.push_str("Normal");
+            activity.assets.small_image.replace("https://github.com/Doloro1978/BSRichPresence/blob/master/Assets/NormalIcon.png?raw=true".to_owned());
+        }
+
+        activity.assets.small_text.replace(diffString.to_owned());
 
         let playingString = "Playing ".to_owned() + String::from(awaw.SongName.clone()).as_str();
         activity.details.replace(playingString);
