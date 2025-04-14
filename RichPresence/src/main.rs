@@ -4,6 +4,7 @@ use BSDataPuller::BSData;
 use BSDataPuller::LevelData;
 use BSDataPuller::LevelState;
 use BSDataPuller::schema::BSMetadata;
+use config;
 use discordipc::Client;
 use discordipc::activity::*;
 use discordipc::packet::*;
@@ -20,6 +21,7 @@ async fn main() {
 
     let oneshot_metadata = BSMetadata::get().await.unwrap();
     let bsdata = BSData::from_raw(oneshot_metadata);
+    config::create_config().await.unwrap();
 
     // start threads to update bsdata.
     bsdata.start().await;
