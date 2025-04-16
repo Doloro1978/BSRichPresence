@@ -1,8 +1,6 @@
 mod bs_richpresence;
-use crate::bs_richpresence::richpresence;
+use crate::bs_richpresence::RichPresence;
 use BSDataPuller::BSData;
-use BSDataPuller::LevelData;
-use BSDataPuller::LevelState;
 use BSDataPuller::schema::BSMetadata;
 use config;
 use discordipc::Client;
@@ -13,14 +11,13 @@ use std::sync::Arc;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 use tokio::time::Duration;
-use tracing::error;
 use tracing::info;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
 
-    let config = config::config_init().await.unwrap();
+    let _config = config::config_init().await.unwrap();
     let oneshot_metadata = BSMetadata::get().await.unwrap();
     let bsdata = BSData::from_raw(oneshot_metadata);
 
@@ -32,10 +29,10 @@ async fn main() {
     let activity = Activity::new().details("Some activity");
     let activity_packet = Packet::new_activity(Some(&activity), None);
     let start = SystemTime::now();
-    let startedAt = start
+    let started_at = start
         .duration_since(UNIX_EPOCH)
         .expect("Time went backwards");
-    let started_at = Arc::new(startedAt);
+    let started_at = Arc::new(started_at);
 
     match client.send_and_wait(activity_packet).unwrap().filter() {
         Ok(_packet) => info!("Activity has been set!"),

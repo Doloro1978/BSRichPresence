@@ -1,39 +1,34 @@
 use BSDataPuller::BSData;
-use BSDataPuller::LevelData;
 use BSDataPuller::LevelState;
-use BSDataPuller::schema::BSMetadata;
-use discordipc::Client;
 use discordipc::activity::*;
-use discordipc::packet::*;
 use tracing::info;
 
 use BSDataPuller::LevelDataInner;
 
-pub trait richpresence {
+pub trait RichPresence {
     async fn to_activity(&self) -> Activity;
-    fn inmenu_Activity() -> Activity;
-    fn insong_Activity(awaw: &LevelDataInner) -> Activity;
+    fn inmenu_activity() -> Activity;
+    fn insong_activity(awaw: &LevelDataInner) -> Activity;
 }
 
-impl richpresence for BSData {
+impl RichPresence for BSData {
     async fn to_activity(&self) -> Activity {
-        let levelData_a = self.levelData.lock().await;
-        let mut activity = Activity::new();
+        let level_data_a = self.levelData.lock().await;
 
-        if let Some(levelData) = levelData_a.LevelDataInner.clone() {
-            if levelData.State == LevelState::Playing {
-                return BSData::insong_Activity(&levelData);
+        if let Some(level_data) = level_data_a.LevelDataInner.clone() {
+            if level_data.State == LevelState::Playing {
+                BSData::insong_activity(&level_data)
             } else {
-                return BSData::inmenu_Activity();
-            };
+                BSData::inmenu_activity()
+            }
         } else {
-            return BSData::inmenu_Activity();
+            BSData::inmenu_activity()
         };
-
+        let activity = Activity::new();
         return activity;
     }
     // all this could be an enum
-    fn inmenu_Activity() -> Activity {
+    fn inmenu_activity() -> Activity {
         let mut activity = Activity::new();
 
         activity.assets.large_image.replace("https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA14143_00/1/i_1867cbfbe18338d0089137e8e84ec6b550a97e1f62a41df7c66e1cba550b1484/i/icon0.png".to_owned());
@@ -50,7 +45,7 @@ impl richpresence for BSData {
         return activity;
     }
 
-    fn insong_Activity(awaw: &LevelDataInner) -> Activity {
+    fn insong_activity(awaw: &LevelDataInner) -> Activity {
         let mut activity = Activity::new();
 
         activity.assets.large_image.replace(awaw.CoverImage.clone());
@@ -67,23 +62,25 @@ impl richpresence for BSData {
             .small_image
             .replace("https://raw.githubusercontent.com/Doloro1978/BSRichPresence/refs/heads/master/Assets/RankedIcon.png".to_owned());
 
-        let mut diffString: String = String::new();
+        let mut diff_string: String = String::new();
         info!(awaw.Star);
         if awaw.Star > 0.0 {
-            diffString.push_str("Ranked");
-            diffString.push_str(" | ");
+            // TODO Use format!
+            diff_string.push_str("Ranked");
+            diff_string.push_str(" | ");
             let mut pp = awaw.Star.to_string();
             pp.push_str(" Stars");
-            diffString.push_str(&pp)
+            diff_string.push_str(&pp)
         } else {
-            diffString.push_str("Normal");
+            diff_string.push_str("Normal");
             activity.assets.small_image.replace("https://github.com/Doloro1978/BSRichPresence/blob/master/Assets/NormalIcon.png?raw=true".to_owned());
         }
 
-        activity.assets.small_text.replace(diffString.to_owned());
+        activity.assets.small_text.replace(diff_string.to_owned());
 
-        let playingString = "Playing ".to_owned() + String::from(awaw.SongName.clone()).as_str();
-        activity.details.replace(playingString);
+        // TODO Use format!
+        let playing_string = "Playing ".to_owned() + String::from(awaw.SongName.clone()).as_str();
+        activity.details.replace(playing_string);
 
         return activity;
     }
