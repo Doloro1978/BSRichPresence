@@ -13,15 +13,16 @@ use std::sync::Arc;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 use tokio::time::Duration;
+use tracing::error;
 use tracing::info;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
 
+    let config = config::config_init().await.unwrap();
     let oneshot_metadata = BSMetadata::get().await.unwrap();
     let bsdata = BSData::from_raw(oneshot_metadata);
-    config::create_config().await.unwrap();
 
     // start threads to update bsdata.
     bsdata.start().await;
