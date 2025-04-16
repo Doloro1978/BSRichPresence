@@ -33,7 +33,7 @@ pub enum LevelState {
 #[derive(Debug, Clone)]
 pub struct LevelDataInner {
     pub State: LevelState,
-    Hash: String,
+    pub Hash: String,
     pub SongName: String,
     pub SongSubName: String,
     pub SongAuthor: String,
@@ -79,6 +79,7 @@ use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 use tokio::time::sleep;
 use tracing::info;
+use tracing::warn;
 impl BSData {
     pub async fn ping() -> bool {
         // Constructs a new connection and pings and drop the connection.
@@ -140,7 +141,11 @@ impl BSData {
                 LevelDataInner: Some(LevelDataInner {
                     SongName: data.SongName,
                     // add the rest
-                    CoverImage: data.CoverImage.unwrap(),
+                    CoverImage: {
+                        // DataPuller has a habit of replying with the img as base64 and only
+                        // sometimes with a usable url.
+                        data.CoverImage.unwrap()
+                    },
                     SongSubName: data.SongSubName,
                     SongAuthor: data.SongAuthor,
                     Hash: data.Hash.unwrap(),
