@@ -1,25 +1,17 @@
 use crate::BSData;
 use crate::BSMetadata;
 use futures_util::StreamExt;
-use reqwest::Client;
 use reqwest_websocket;
 use reqwest_websocket::Message;
-use reqwest_websocket::Message::Close;
-use reqwest_websocket::RequestBuilderExt;
-use std::mem;
-use std::time::Duration;
-use tokio::spawn;
-use tokio::sync;
 use tracing::debug;
 use tracing::error;
-use tracing::info;
 
 impl BSData {
     // starts 2 threads to update BSData
     pub async fn start(&self) {
         //info!(UNIX_EPOCH);
         //let mut gameData = self.gameData.clone();
-        let mut levelData = self.levelData.clone();
+        let levelData = self.levelData.clone();
 
         //let levelData = &self.levelData;
 
