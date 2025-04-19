@@ -1,5 +1,6 @@
 use serde::Deserialize;
 
+#[allow(unused)]
 #[derive(Debug, Deserialize)]
 pub struct RawBeatSaverMap {
     pub automapper: bool,
@@ -36,6 +37,7 @@ pub struct RawBeatSaverMap {
     pub versions: Vec<Version>,
 }
 
+#[allow(unused)]
 #[derive(Debug, Deserialize)]
 pub struct Metadata {
     pub bpm: Option<serde_json::Value>,
@@ -50,6 +52,7 @@ pub struct Metadata {
     pub song_sub_name: String,
 }
 
+#[allow(unused)]
 #[derive(Debug, Deserialize)]
 pub struct Stats {
     pub downloads: u32,
@@ -64,6 +67,7 @@ pub struct Stats {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(unused)]
 pub struct User {
     pub admin: bool,
     pub avatar: String,
@@ -91,6 +95,7 @@ pub struct User {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(unused)]
 pub struct FollowData {
     pub collab: bool,
     pub curation: bool,
@@ -101,6 +106,7 @@ pub struct FollowData {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(unused)]
 pub struct UserStats {
     pub avgBpm: Option<serde_json::Value>,
     pub avgDuration: Option<serde_json::Value>,
@@ -115,6 +121,7 @@ pub struct UserStats {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(unused)]
 pub struct DiffStats {
     pub easy: u32,
     pub expert: u32,
@@ -125,6 +132,7 @@ pub struct DiffStats {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(unused)]
 pub struct Version {
     pub coverURL: String,
     #[serde(rename = "createdAt")]
@@ -144,6 +152,7 @@ pub struct Version {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(unused)]
 pub struct Diff {
     pub blStars: Option<serde_json::Value>,
     pub bombs: u32,
@@ -170,6 +179,7 @@ pub struct Diff {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(unused)]
 pub struct ParitySummary {
     pub errors: u32,
     pub resets: u32,
@@ -177,6 +187,7 @@ pub struct ParitySummary {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(unused)]
 pub struct TestPlay {
     #[serde(rename = "createdAt")]
     pub created_at: String,

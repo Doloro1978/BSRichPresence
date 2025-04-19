@@ -1,13 +1,11 @@
 mod schema;
-use anyhow::anyhow;
 use dirs::config_dir;
-use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::Read;
 use std::io::Write;
-use std::path::{Path, PathBuf};
-use tracing::debug;
+use std::path::PathBuf;
+use tracing::error;
 use tracing::info;
 use tracing::warn;
 
@@ -47,7 +45,7 @@ pub async fn config_init() -> Result<schema::RichPresenceConfig, anyhow::Error> 
     let mut hihi = create_config().await?;
     let mut hihi_string = String::new();
     hihi.read_to_string(&mut hihi_string).unwrap();
-    info!("touch1");
+    //info!("Config ");
     if hihi_string.is_empty() {
         info!("touch2");
         let default_config = schema::RichPresenceConfig::default();
@@ -57,6 +55,12 @@ pub async fn config_init() -> Result<schema::RichPresenceConfig, anyhow::Error> 
         hihi.flush()?;
         return Ok(default_config);
     }
-    let toml_hihi: schema::RichPresenceConfig = toml::from_str(&hihi_string).unwrap();
-    Ok(toml_hihi)
+    let toml_hihi = toml::from_str(&hihi_string);
+    if let Err(toml_hihi) = toml_hihi {
+        error!("{:#?}", toml_hihi);
+        warn!("Returning default config...");
+        return Ok(schema::RichPresenceConfig::default());
+    } else {
+        return Ok(toml_hihi.unwrap());
+    }
 }
