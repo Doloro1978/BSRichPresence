@@ -11,13 +11,15 @@ use std::sync::Arc;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 use tokio::time::Duration;
+use tracing::debug;
 use tracing::info;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
 
-    let _config = config::config_init().await.unwrap();
+    let config = config::config_init().await.unwrap();
+    debug!("{:#?}", config);
     let oneshot_metadata = BSMetadata::get().await.unwrap();
     let bsdata = BSData::from_raw(oneshot_metadata);
 
@@ -26,7 +28,7 @@ async fn main() {
 
     let client = Client::new_simple("1359573855412420741");
     client.connect_and_wait().unwrap();
-    let activity = Activity::new().details("Some activity");
+    let activity = Activity::new().details("Some");
     let activity_packet = Packet::new_activity(Some(&activity), None);
     let start = SystemTime::now();
     let started_at = start
@@ -59,6 +61,7 @@ async fn main() {
                 start: Some(started_at.clone().as_secs() as i64),
                 ..Default::default()
             });
+            info!("{:#?}", activity);
             let activity_packet = Packet::new_activity(Some(&activity), None);
             client.send_and_wait(activity_packet).unwrap();
             //info!("awa");

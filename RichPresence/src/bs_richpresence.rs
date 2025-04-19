@@ -23,9 +23,9 @@ impl RichPresence for BSData {
             }
         } else {
             BSData::inmenu_activity()
-        };
-        let activity = Activity::new();
-        return activity;
+        }
+        //let activity = Activity::new();
+        //return activity;
     }
     // all this could be an enum
     fn inmenu_activity() -> Activity {
@@ -41,6 +41,7 @@ impl RichPresence for BSData {
         activity.assets.small_text.replace("Menu".to_owned());
 
         activity.details.replace("Sitting in menu..".to_owned());
+        //info!("{:#?}", activity);
 
         return activity;
     }
