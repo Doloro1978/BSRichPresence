@@ -3,6 +3,7 @@ use reqwest::Client;
 use reqwest_websocket::Message;
 use reqwest_websocket::RequestBuilderExt;
 use serde::{Deserialize, Serialize};
+use tracing::error;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct BSLiveData {
@@ -54,17 +55,17 @@ impl BSLiveData {
                         //print!("{awa}");
                         let bs_data: BSLiveData = serde_json::from_str(&awa).unwrap();
                         return Ok(bs_data);
-                    }
-                    Err(panic!("{:?}", ""))
+                    };
+                    //Err(panic!("{:?}", ""))
                 } else {
-                    eprintln!("No data received on initial connection.");
-                    Err(panic!("{:?}", "No data."))
-                }
+                    error!("No data received on initial connection.");
+                    //Err(panic!("{:?}", "No data."))
+                };
                 //Ok(())
             }
             Err(err) => {
                 eprintln!("Failed to establish WebSocket connection: {}", err);
-                panic!("{:?}", err)
+                Err(())
             }
         }
     }
