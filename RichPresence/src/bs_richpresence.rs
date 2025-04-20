@@ -63,17 +63,13 @@ impl RichPresence for BSData {
             .small_image
             .replace("https://raw.githubusercontent.com/Doloro1978/BSRichPresence/refs/heads/master/Assets/RankedIcon.png".to_owned());
 
-        let mut diff_string: String = String::new();
+        let diff_string: String;
         info!(awaw.Star);
         if awaw.Star > 0.0 {
-            // TODO Use format!
-            diff_string.push_str("Ranked");
-            diff_string.push_str(" | ");
-            let mut pp = awaw.Star.to_string();
-            pp.push_str(" Stars");
-            diff_string.push_str(&pp)
+            let stars = awaw.Star;
+            diff_string = format!("Ranked | {stars} Stars");
         } else {
-            diff_string.push_str("Normal");
+            diff_string = format!("Normal");
             activity.assets.small_image.replace("https://github.com/Doloro1978/BSRichPresence/blob/master/Assets/NormalIcon.png?raw=true".to_owned());
         }
 

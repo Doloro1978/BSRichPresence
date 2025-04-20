@@ -36,8 +36,30 @@ pub struct LevelDataInner {
     pub SongAuthor: String,
     Mapper: String,
     pub CoverImage: String,
-    pub Star: f32,
+    pub RankedData: RankedData,
     pub Diff: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct RankedData {
+    // Stars
+    bl_ranked: bool,
+    bl_qualified: bool,
+    bl_stars: f32,
+    ss_ranked: bool,
+    ss_qualified: bool,
+    ss_stars: f32,
+}
+
+pub struct RankedState {
+    pub Ranked: bool,
+    pub Qualified: bool,
+    pub BeatleaderQualified: bool,
+    pub ScoresaberQualified: bool,
+    pub BeatleaderRanked: bool,
+    pub ScoresaberRanked: bool,
+    pub BeatleaderStars: f32,
+    pub ScoresaberStars: f32,
 }
 
 #[derive(Debug)]
@@ -152,7 +174,14 @@ impl BSData {
                         }
                     },
                     Mapper: data.Mapper,
-                    Star: data.RankedState.BeatleaderStars,
+                    RankedData: RankedData {
+                        bl_ranked: data.RankedState.BeatleaderRanked,
+                        bl_stars: data.RankedState.BeatleaderStars,
+                        ss_stars: data.RankedState.ScoresaberStars,
+                        ss_ranked: data.RankedState.ScoresaberRanked,
+                        bl_qualified: data.RankedState.BeatleaderQualified,
+                        ss_qualified: data.RankedState.ScoresaberQualified,
+                    },
                     Diff: {
                         if let Some(DiffLabel) = data.CustomDifficultyLabel {
                             DiffLabel

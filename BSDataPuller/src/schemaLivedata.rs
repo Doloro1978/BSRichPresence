@@ -56,17 +56,16 @@ impl BSLiveData {
                         let bs_data: BSLiveData = serde_json::from_str(&awa).unwrap();
                         return Ok(bs_data);
                     };
+                    Err(())
                     //Err(panic!("{:?}", ""))
                 } else {
                     error!("No data received on initial connection.");
+                    Err(())
                     //Err(panic!("{:?}", "No data."))
-                };
+                }
                 //Ok(())
             }
-            Err(err) => {
-                eprintln!("Failed to establish WebSocket connection: {}", err);
-                Err(())
-            }
+            Err(_err) => Err(()),
         }
     }
 }

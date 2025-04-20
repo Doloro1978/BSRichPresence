@@ -1,5 +1,6 @@
 mod bs_richpresence;
 use crate::bs_richpresence::RichPresence;
+mod bs_processing;
 use BSDataPuller::BSData;
 use BSDataPuller::schema::BSMetadata;
 use config;
