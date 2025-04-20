@@ -1,3 +1,5 @@
+use crate::bs_processing::BSProcessedData;
+use crate::bs_processing::ProcessedLevelData;
 use BSDataPuller::BSData;
 use BSDataPuller::LevelState;
 use discordipc::activity::*;
@@ -8,21 +10,20 @@ use BSDataPuller::LevelDataInner;
 pub trait RichPresence {
     async fn to_activity(&self) -> Activity;
     fn inmenu_activity() -> Activity;
-    fn insong_activity(awaw: &LevelDataInner) -> Activity;
+    fn insong_activity(awaw: &ProcessedLevelData) -> Activity;
 }
 
-impl RichPresence for BSData {
+impl RichPresence for BSProcessedData {
     async fn to_activity(&self) -> Activity {
-        let level_data_a = self.levelData.lock().await;
-
-        if let Some(level_data) = level_data_a.LevelDataInner.clone() {
-            if level_data.State == LevelState::Playing {
-                BSData::insong_activity(&level_data)
+        //let level_data_a = self.levelData.lock().await;
+        if let Some(level_data) = self.level_data.clone() {
+            if level_data.state == LevelState::Playing {
+                BSProcessedData::insong_activity(&level_data)
             } else {
-                BSData::inmenu_activity()
+                BSProcessedData::inmenu_activity()
             }
         } else {
-            BSData::inmenu_activity()
+            BSProcessedData::inmenu_activity()
         }
         //let activity = Activity::new();
         //return activity;
@@ -46,17 +47,14 @@ impl RichPresence for BSData {
         return activity;
     }
 
-    fn insong_activity(awaw: &LevelDataInner) -> Activity {
+    fn insong_activity(awaw: &ProcessedLevelData) -> Activity {
         let mut activity = Activity::new();
 
-        activity.assets.large_image.replace(awaw.CoverImage.clone());
-        if awaw.CoverImage.len() > 100 {
-            activity.assets.large_image.replace(
-                "https://upload.wikimedia.org/wikipedia/commons/5/5a/Black_question_mark.png"
-                    .to_owned(),
-            );
-        };
-        activity.assets.large_text.replace(awaw.SongName.clone());
+        activity
+            .assets
+            .large_image
+            .replace(awaw.cover_image.clone());
+        activity.assets.large_text.replace(awaw.song_name.clone());
 
         activity
             .assets
@@ -64,9 +62,9 @@ impl RichPresence for BSData {
             .replace("https://raw.githubusercontent.com/Doloro1978/BSRichPresence/refs/heads/master/Assets/RankedIcon.png".to_owned());
 
         let diff_string: String;
-        info!(awaw.Star);
-        if awaw.Star > 0.0 {
-            let stars = awaw.Star;
+        info!("{:#?}", awaw);
+        if awaw.stars > 0.0 {
+            let stars = awaw.stars;
             diff_string = format!("Ranked | {stars} Stars");
         } else {
             diff_string = format!("Normal");
@@ -76,7 +74,7 @@ impl RichPresence for BSData {
         activity.assets.small_text.replace(diff_string.to_owned());
 
         // TODO Use format!
-        let playing_string = "Playing ".to_owned() + String::from(awaw.SongName.clone()).as_str();
+        let playing_string = "Playing ".to_owned() + String::from(awaw.song_name.clone()).as_str();
         activity.details.replace(playing_string);
 
         return activity;

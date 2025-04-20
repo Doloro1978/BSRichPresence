@@ -43,12 +43,12 @@ pub struct LevelDataInner {
 #[derive(Debug, Clone)]
 pub struct RankedData {
     // Stars
-    bl_ranked: bool,
-    bl_qualified: bool,
-    bl_stars: f32,
-    ss_ranked: bool,
-    ss_qualified: bool,
-    ss_stars: f32,
+    pub bl_ranked: bool,
+    pub bl_qualified: bool,
+    pub bl_stars: f32,
+    pub ss_ranked: bool,
+    pub ss_qualified: bool,
+    pub ss_stars: f32,
 }
 
 pub struct RankedState {

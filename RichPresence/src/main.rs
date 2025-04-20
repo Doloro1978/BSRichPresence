@@ -1,6 +1,7 @@
 mod bs_richpresence;
 use crate::bs_richpresence::RichPresence;
 mod bs_processing;
+use crate::bs_processing::Processing;
 use BSDataPuller::BSData;
 use BSDataPuller::schema::BSMetadata;
 use config;
@@ -57,7 +58,7 @@ async fn main() {
     tokio::spawn(async move {
         loop {
             tokio::time::sleep(Duration::from_secs(1)).await;
-            let mut activity = bsdata.to_activity().await;
+            let mut activity = bsdata.process(&config).await.to_activity().await;
             activity.timestamps.replace(Timestamps {
                 start: Some(started_at.clone().as_secs() as i64),
                 ..Default::default()
