@@ -50,7 +50,7 @@ async fn main() {
             if !BSData::ping().await {
                 exit(0);
             }
-            info!("pinged");
+            debug!("pinged");
             tokio::time::sleep(Duration::from_secs(3)).await;
         }
     });
@@ -63,7 +63,7 @@ async fn main() {
                 start: Some(started_at.clone().as_secs() as i64),
                 ..Default::default()
             });
-            info!("{:#?}", activity);
+            debug!("{:#?}", activity);
             let activity_packet = Packet::new_activity(Some(&activity), None);
             client.send_and_wait(activity_packet).unwrap();
             //info!("awa");

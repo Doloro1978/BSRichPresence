@@ -3,6 +3,7 @@ use crate::bs_processing::ProcessedLevelData;
 use BSDataPuller::BSData;
 use BSDataPuller::LevelState;
 use discordipc::activity::*;
+use tracing::debug;
 use tracing::info;
 
 use BSDataPuller::LevelDataInner;
@@ -62,7 +63,7 @@ impl RichPresence for BSProcessedData {
             .replace("https://raw.githubusercontent.com/Doloro1978/BSRichPresence/refs/heads/master/Assets/RankedIcon.png".to_owned());
 
         let diff_string: String;
-        info!("{:#?}", awaw);
+        debug!("{:#?}", awaw);
         if awaw.stars > 0.0 {
             let stars = awaw.stars;
             diff_string = format!("Ranked | {stars} Stars");
