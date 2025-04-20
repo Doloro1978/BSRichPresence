@@ -3,6 +3,7 @@ use reqwest::Client;
 use reqwest_websocket::Message;
 use reqwest_websocket::RequestBuilderExt;
 use serde::{Deserialize, Serialize};
+use tracing::error;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct BSLiveData {
@@ -45,7 +46,7 @@ impl BSLiveData {
 
         // Transform into WebSocket
         match response.into_websocket().await {
-            Ok((mut ws)) => {
+            Ok(mut ws) => {
                 println!("Successfully connected to WebSocket.");
 
                 // Read the initial message from the WebSocket
@@ -54,18 +55,17 @@ impl BSLiveData {
                         //print!("{awa}");
                         let bs_data: BSLiveData = serde_json::from_str(&awa).unwrap();
                         return Ok(bs_data);
-                    }
-                    Err(Err("").unwrap())
+                    };
+                    Err(())
+                    //Err(panic!("{:?}", ""))
                 } else {
-                    eprintln!("No data received on initial connection.");
-                    Err(Err("No data.").unwrap())
+                    error!("No data received on initial connection.");
+                    Err(())
+                    //Err(panic!("{:?}", "No data."))
                 }
                 //Ok(())
             }
-            Err(err) => {
-                eprintln!("Failed to establish WebSocket connection: {}", err);
-                Err(err).unwrap()
-            }
+            Err(_err) => Err(()),
         }
     }
 }

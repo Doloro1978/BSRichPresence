@@ -2,10 +2,7 @@ pub mod schema;
 pub mod schemaLivedata;
 pub mod thread;
 use crate::schema::*;
-use futures_util::FutureExt;
-use futures_util::poll;
 use std::sync::Arc;
-use tokio::pin;
 use tokio::sync::Mutex;
 
 #[derive(Debug)]
@@ -33,14 +30,36 @@ pub enum LevelState {
 #[derive(Debug, Clone)]
 pub struct LevelDataInner {
     pub State: LevelState,
-    Hash: String,
+    pub Hash: String,
     pub SongName: String,
     pub SongSubName: String,
     pub SongAuthor: String,
     Mapper: String,
     pub CoverImage: String,
-    pub Star: f32,
+    pub RankedData: RankedData,
     pub Diff: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct RankedData {
+    // Stars
+    pub bl_ranked: bool,
+    pub bl_qualified: bool,
+    pub bl_stars: f32,
+    pub ss_ranked: bool,
+    pub ss_qualified: bool,
+    pub ss_stars: f32,
+}
+
+pub struct RankedState {
+    pub Ranked: bool,
+    pub Qualified: bool,
+    pub BeatleaderQualified: bool,
+    pub ScoresaberQualified: bool,
+    pub BeatleaderRanked: bool,
+    pub ScoresaberRanked: bool,
+    pub BeatleaderStars: f32,
+    pub ScoresaberStars: f32,
 }
 
 #[derive(Debug)]
@@ -73,7 +92,6 @@ pub struct refreshBSData {
     Data: Arc<Mutex<BSData>>,
 }
 use reqwest::Client;
-use reqwest_websocket::RequestBuilderExt;
 use std::time::Duration;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
@@ -96,16 +114,16 @@ impl BSData {
         match connection {
             Ok(_) => {
                 //info!("{:#?}", reply);
-                return true;
+                true
             }
             Err(_) => {
                 //info!("{:#?}", e);
-                return false;
+                false
             }
         }
     }
     pub async fn is_game_running(&self) -> bool {
-        let lastMsgTimestamp = self.gamerunning.clone().lock().await.clone();
+        let lastMsgTimestamp = *self.gamerunning.clone().lock().await;
 
         let start = SystemTime::now();
         let since_the_epoch = start
@@ -116,9 +134,9 @@ impl BSData {
             info!(lastMsgTimestamp);
             info!("{}", since_the_epoch.as_secs() + 100);
             sleep(Duration::from_secs(1)).await;
-            return false;
+            false
         } else {
-            return true;
+            true
         }
     }
     //pub fn
@@ -140,7 +158,11 @@ impl BSData {
                 LevelDataInner: Some(LevelDataInner {
                     SongName: data.SongName,
                     // add the rest
-                    CoverImage: data.CoverImage.unwrap(),
+                    CoverImage: {
+                        // DataPuller has a habit of replying with the img as base64 and only
+                        // sometimes with a usable url.
+                        data.CoverImage.unwrap()
+                    },
                     SongSubName: data.SongSubName,
                     SongAuthor: data.SongAuthor,
                     Hash: data.Hash.unwrap(),
@@ -152,7 +174,14 @@ impl BSData {
                         }
                     },
                     Mapper: data.Mapper,
-                    Star: data.RankedState.BeatleaderStars,
+                    RankedData: RankedData {
+                        bl_ranked: data.RankedState.BeatleaderRanked,
+                        bl_stars: data.RankedState.BeatleaderStars,
+                        ss_stars: data.RankedState.ScoresaberStars,
+                        ss_ranked: data.RankedState.ScoresaberRanked,
+                        bl_qualified: data.RankedState.BeatleaderQualified,
+                        ss_qualified: data.RankedState.ScoresaberQualified,
+                    },
                     Diff: {
                         if let Some(DiffLabel) = data.CustomDifficultyLabel {
                             DiffLabel

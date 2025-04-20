@@ -1,39 +1,36 @@
+use crate::bs_processing::BSProcessedData;
+use crate::bs_processing::ProcessedLevelData;
 use BSDataPuller::BSData;
-use BSDataPuller::LevelData;
 use BSDataPuller::LevelState;
-use BSDataPuller::schema::BSMetadata;
-use discordipc::Client;
 use discordipc::activity::*;
-use discordipc::packet::*;
+use tracing::debug;
 use tracing::info;
 
 use BSDataPuller::LevelDataInner;
 
-pub trait richpresence {
+pub trait RichPresence {
     async fn to_activity(&self) -> Activity;
-    fn inmenu_Activity() -> Activity;
-    fn insong_Activity(awaw: &LevelDataInner) -> Activity;
+    fn inmenu_activity() -> Activity;
+    fn insong_activity(awaw: &ProcessedLevelData) -> Activity;
 }
 
-impl richpresence for BSData {
+impl RichPresence for BSProcessedData {
     async fn to_activity(&self) -> Activity {
-        let levelData_a = self.levelData.lock().await;
-        let mut activity = Activity::new();
-
-        if let Some(levelData) = levelData_a.LevelDataInner.clone() {
-            if levelData.State == LevelState::Playing {
-                return BSData::insong_Activity(&levelData);
+        //let level_data_a = self.levelData.lock().await;
+        if let Some(level_data) = self.level_data.clone() {
+            if level_data.state == LevelState::Playing {
+                BSProcessedData::insong_activity(&level_data)
             } else {
-                return BSData::inmenu_Activity();
-            };
+                BSProcessedData::inmenu_activity()
+            }
         } else {
-            return BSData::inmenu_Activity();
-        };
-
-        return activity;
+            BSProcessedData::inmenu_activity()
+        }
+        //let activity = Activity::new();
+        //return activity;
     }
     // all this could be an enum
-    fn inmenu_Activity() -> Activity {
+    fn inmenu_activity() -> Activity {
         let mut activity = Activity::new();
 
         activity.assets.large_image.replace("https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA14143_00/1/i_1867cbfbe18338d0089137e8e84ec6b550a97e1f62a41df7c66e1cba550b1484/i/icon0.png".to_owned());
@@ -46,44 +43,40 @@ impl richpresence for BSData {
         activity.assets.small_text.replace("Menu".to_owned());
 
         activity.details.replace("Sitting in menu..".to_owned());
+        //info!("{:#?}", activity);
 
         return activity;
     }
 
-    fn insong_Activity(awaw: &LevelDataInner) -> Activity {
+    fn insong_activity(awaw: &ProcessedLevelData) -> Activity {
         let mut activity = Activity::new();
 
-        activity.assets.large_image.replace(awaw.CoverImage.clone());
-        if awaw.CoverImage.len() > 100 {
-            activity.assets.large_image.replace(
-                "https://upload.wikimedia.org/wikipedia/commons/5/5a/Black_question_mark.png"
-                    .to_owned(),
-            );
-        };
-        activity.assets.large_text.replace(awaw.SongName.clone());
+        activity
+            .assets
+            .large_image
+            .replace(awaw.cover_image.clone());
+        activity.assets.large_text.replace(awaw.song_name.clone());
 
         activity
             .assets
             .small_image
             .replace("https://raw.githubusercontent.com/Doloro1978/BSRichPresence/refs/heads/master/Assets/RankedIcon.png".to_owned());
 
-        let mut diffString: String = String::new();
-        info!(awaw.Star);
-        if awaw.Star > 0.0 {
-            diffString.push_str("Ranked");
-            diffString.push_str(" | ");
-            let mut pp = awaw.Star.to_string();
-            pp.push_str(" Stars");
-            diffString.push_str(&pp)
+        let diff_string: String;
+        debug!("{:#?}", awaw);
+        if awaw.stars > 0.0 {
+            let stars = awaw.stars;
+            diff_string = format!("Ranked | {stars} Stars");
         } else {
-            diffString.push_str("Normal");
+            diff_string = format!("Normal");
             activity.assets.small_image.replace("https://github.com/Doloro1978/BSRichPresence/blob/master/Assets/NormalIcon.png?raw=true".to_owned());
         }
 
-        activity.assets.small_text.replace(diffString.to_owned());
+        activity.assets.small_text.replace(diff_string.to_owned());
 
-        let playingString = "Playing ".to_owned() + String::from(awaw.SongName.clone()).as_str();
-        activity.details.replace(playingString);
+        // TODO Use format!
+        let playing_string = "Playing ".to_owned() + String::from(awaw.song_name.clone()).as_str();
+        activity.details.replace(playing_string);
 
         return activity;
     }
