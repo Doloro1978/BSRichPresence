@@ -165,7 +165,7 @@ impl BSData {
                     },
                     SongSubName: data.SongSubName,
                     SongAuthor: data.SongAuthor,
-                    Hash: data.Hash.unwrap(),
+                    Hash: data.Hash.unwrap_or("0".to_owned()), // OST maps don't have a hash
                     State: {
                         if data.InLevel {
                             LevelState::Playing
