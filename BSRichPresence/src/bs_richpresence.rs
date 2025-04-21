@@ -73,12 +73,11 @@ impl RichPresence for BSProcessedData {
         }
         if awaw.qualified {
             diff_string = format!("Qualified");
-            // Add qualified icon..
+            // TODO Add qualified icon..
         }
 
         activity.assets.small_text.replace(diff_string.to_owned());
 
-        // TODO Use format!
         let playing_string = format!("Playing {} ({})", awaw.song_name, awaw.song_sub_name);
         activity.details.replace(playing_string);
 
