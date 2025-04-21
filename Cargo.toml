@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["BSDataPuller", "config", "RichPresence"]
+members = ["BSDataPuller", "config", "BSRichPresence"]
 
 #[profile.release]
 #opt-level = "z"  # Optimize for size.
