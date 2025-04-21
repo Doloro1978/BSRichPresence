@@ -62,7 +62,7 @@ impl RichPresence for BSProcessedData {
             .small_image
             .replace("https://raw.githubusercontent.com/Doloro1978/BSRichPresence/refs/heads/master/Assets/RankedIcon.png".to_owned());
 
-        let diff_string: String;
+        let mut diff_string: String;
         debug!("{:#?}", awaw);
         if awaw.stars > 0.0 {
             let stars = awaw.stars;
@@ -71,11 +71,15 @@ impl RichPresence for BSProcessedData {
             diff_string = format!("Normal");
             activity.assets.small_image.replace("https://github.com/Doloro1978/BSRichPresence/blob/master/Assets/NormalIcon.png?raw=true".to_owned());
         }
+        if awaw.qualified {
+            diff_string = format!("Qualified");
+            // Add qualified icon..
+        }
 
         activity.assets.small_text.replace(diff_string.to_owned());
 
         // TODO Use format!
-        let playing_string = "Playing ".to_owned() + String::from(awaw.song_name.clone()).as_str();
+        let playing_string = format!("Playing {} ({})", awaw.song_name, awaw.song_sub_name);
         activity.details.replace(playing_string);
 
         return activity;
