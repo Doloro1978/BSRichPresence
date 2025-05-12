@@ -52,18 +52,14 @@ impl BSLiveData {
                 // Read the initial message from the WebSocket
                 if let Some(Ok(text)) = ws.next().await {
                     if let Message::Text(awa) = text {
-                        //print!("{awa}");
                         let bs_data: BSLiveData = serde_json::from_str(&awa).unwrap();
                         return Ok(bs_data);
                     };
                     Err(())
-                    //Err(panic!("{:?}", ""))
                 } else {
                     error!("No data received on initial connection.");
                     Err(())
-                    //Err(panic!("{:?}", "No data."))
                 }
-                //Ok(())
             }
             Err(_err) => Err(()),
         }

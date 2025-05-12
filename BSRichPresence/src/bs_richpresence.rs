@@ -43,7 +43,6 @@ impl RichPresence for BSProcessedData {
         activity.assets.small_text.replace("Menu".to_owned());
 
         activity.details.replace("Sitting in menu..".to_owned());
-        //info!("{:#?}", activity);
 
         return activity;
     }

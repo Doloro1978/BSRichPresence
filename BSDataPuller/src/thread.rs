@@ -29,9 +29,6 @@ impl BSData {
                     if let Message::Text(msg) = msg {
                         let new =
                             BSData::from_raw(serde_json::from_str::<BSMetadata>(&msg).unwrap());
-                        //let mut levelDataLock = levelData_lock.lock().await;
-                        //.as_ref()
-                        //print!("hit1");
 
                         let mut data_level_data = level_data_lock.lock().await;
 
@@ -47,29 +44,13 @@ impl BSData {
                         // Lock the BSData LevelData field
                         let new_level_data = &new.levelData.lock().await;
 
-                        //print!("hit2");
-                        //print!("{:#?}\n\n", awaw.as_ref().unwrap().LevelDataInner.SongName);
-                        //*data_levelData.LevelDataInner =
                         data_level_data.overwrite_leveldata(
                             new_level_data.LevelDataInner.as_ref().unwrap().to_owned(),
                         );
-
-                        //print!("hit3");
-                        //drop(levelDataLock)
-                        //ws.flush();
                     } else {
                         error!("Unable to handle message : \n{:#?}", msg);
-                        //if let Message::Close
-                        //if let Message::Binary(msg) = msg {
-                        //}
-                        //print!("{:#?}", msg);
-                        //if let = msg {}
-                        //info!("huh");
-                        //info!("guessing beat saber exited.. quitting.............");
-                        //std::process::exit(0);
                         continue;
                     };
-                    //print!(msg);
                 } else {
                     error!("Unable to await websocket.. killing thread.");
                     break;

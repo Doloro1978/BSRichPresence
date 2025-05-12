@@ -109,17 +109,9 @@ impl BSData {
             .timeout(Duration::from_secs(5))
             .send()
             .await;
-        //tokio::time::sleep(Duration::from_secs(5)).await;
-        //pin!(connection)
         match connection {
-            Ok(_) => {
-                //info!("{:#?}", reply);
-                true
-            }
-            Err(_) => {
-                //info!("{:#?}", e);
-                false
-            }
+            Ok(_) => true,
+            Err(_) => false,
         }
     }
     pub async fn is_game_running(&self) -> bool {
@@ -149,10 +141,6 @@ impl BSData {
         let mut levelData = LevelData {
             LevelDataInner: None,
         };
-        //print!(
-        //    "{}, {}, {}, {}",
-        //    data.InLevel, data.LevelFinished, data.LevelPaused, data.LevelQuit
-        //);
         if data.InLevel {
             levelData = LevelData {
                 LevelDataInner: Some(LevelDataInner {
