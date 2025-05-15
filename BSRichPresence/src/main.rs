@@ -3,6 +3,7 @@ use crate::bs_richpresence::RichPresence;
 mod bs_processing;
 use crate::bs_processing::Processing;
 use BSDataPuller::BSData;
+use BSDataPuller::livedata::schema::BSLivedata;
 use BSDataPuller::schema::BSMetadata;
 use config;
 use discordipc::Client;
@@ -10,6 +11,7 @@ use discordipc::activity::*;
 use discordipc::packet::*;
 use std::process::exit;
 use std::sync::Arc;
+use std::sync::RwLock;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 use tokio::time::Duration;
@@ -56,9 +58,14 @@ async fn main() {
     });
 
     tokio::spawn(async move {
+        let bslivedata = BSLivedata::start().await;
         loop {
             tokio::time::sleep(Duration::from_secs(1)).await;
-            let mut activity = bsdata.process(&config).await.to_activity().await;
+            let mut activity = bsdata
+                .process(&config)
+                .await
+                .to_activity(bslivedata.clone().lock().await.as_ref().unwrap())
+                .await;
             activity.timestamps.replace(Timestamps {
                 start: Some(started_at.clone().as_secs() as i64),
                 ..Default::default()

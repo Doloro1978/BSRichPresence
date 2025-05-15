@@ -1,5 +1,6 @@
+pub mod livedata;
 pub mod schema;
-pub mod schemaLivedata;
+//pub mod schemaLivedata;
 pub mod thread;
 use crate::schema::*;
 use std::sync::Arc;
@@ -38,6 +39,7 @@ pub struct LevelDataInner {
     pub CoverImage: String,
     pub RankedData: RankedData,
     pub Diff: String,
+    pub Time: u32,
 }
 
 #[derive(Debug, Clone)]
@@ -161,6 +163,7 @@ impl BSData {
                             LevelState::Quit
                         }
                     },
+                    Time: data.Duration,
                     Mapper: data.Mapper,
                     RankedData: RankedData {
                         bl_ranked: data.RankedState.BeatleaderRanked,

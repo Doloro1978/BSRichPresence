@@ -2,24 +2,26 @@ use crate::bs_processing::BSProcessedData;
 use crate::bs_processing::ProcessedLevelData;
 use BSDataPuller::BSData;
 use BSDataPuller::LevelState;
+use BSDataPuller::livedata::schema::BSLivedata;
 use discordipc::activity::*;
+use std::cell::Ref;
 use tracing::debug;
 use tracing::info;
 
 use BSDataPuller::LevelDataInner;
 
 pub trait RichPresence {
-    async fn to_activity(&self) -> Activity;
+    async fn to_activity(&self, livedata: &BSLivedata) -> Activity;
     fn inmenu_activity() -> Activity;
-    fn insong_activity(awaw: &ProcessedLevelData) -> Activity;
+    fn insong_activity(awaw: &ProcessedLevelData, livedata: &BSLivedata) -> Activity;
 }
 
 impl RichPresence for BSProcessedData {
-    async fn to_activity(&self) -> Activity {
+    async fn to_activity(&self, livedata: &BSLivedata) -> Activity {
         //let level_data_a = self.levelData.lock().await;
         if let Some(level_data) = self.level_data.clone() {
             if level_data.state == LevelState::Playing {
-                BSProcessedData::insong_activity(&level_data)
+                BSProcessedData::insong_activity(&level_data, livedata)
             } else {
                 BSProcessedData::inmenu_activity()
             }
@@ -47,7 +49,7 @@ impl RichPresence for BSProcessedData {
         return activity;
     }
 
-    fn insong_activity(awaw: &ProcessedLevelData) -> Activity {
+    fn insong_activity(awaw: &ProcessedLevelData, livedata: &BSLivedata) -> Activity {
         let mut activity = Activity::new();
 
         activity
@@ -77,9 +79,26 @@ impl RichPresence for BSProcessedData {
 
         activity.assets.small_text.replace(diff_string.to_owned());
 
-        let playing_string = format!("Playing {} ({})", awaw.song_name, awaw.song_sub_name);
+        activity.state.replace(format!(
+            "{} // Score - {}",
+            calculate_time(livedata.time_elapsed, awaw.time),
+            livedata.score
+        ));
+
+        let playing_string = format!("Playing {} {}", awaw.song_name, awaw.song_sub_name);
         activity.details.replace(playing_string);
 
         return activity;
     }
+}
+fn calculate_time(elapsed: u32, total: u32) -> String {
+    let total_min = total / 60;
+    let total_sec = total % 60;
+    let elapsed_min = elapsed / 60;
+    let elapsed_sec = elapsed % 60;
+
+    let total_str = format!("{:02}:{:02}", total_min, total_sec);
+    let elapsed_str = format!("{:02}:{:02}", elapsed_min, elapsed_sec);
+
+    return format!("{} / {}", elapsed_str, total_str);
 }

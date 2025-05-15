@@ -18,6 +18,7 @@ pub struct ProcessedLevelData {
     pub stars: f32,
     pub qualified: bool,
     pub ranked: bool,
+    pub time: u32,
 }
 
 pub struct BSProcessedData {
@@ -40,6 +41,7 @@ impl Processing for BSData {
                     song_name: level_data.SongName,
                     song_sub_name: level_data.SongSubName,
                     song_author: level_data.SongAuthor,
+                    time: level_data.Time,
                     cover_image: {
                         if level_data.CoverImage.len() > 100 {
                             // CoverImage url is invalid (it returned a base64 data)
