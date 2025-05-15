@@ -2,8 +2,7 @@
 resolver = "2"
 members = ["BSDataPuller", "config", "BSRichPresence"]
 
-#[profile.release]
-#opt-level = "z"  # Optimize for size.
-#lto = true
-#codegen-units = 1
-#panic = "abort"
+[profile.release]
+opt-level = "z"  # Optimize for size.
+lto = true
+codegen-units = 1

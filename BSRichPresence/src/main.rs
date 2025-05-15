@@ -15,13 +15,23 @@ use std::sync::RwLock;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 use tokio::time::Duration;
+use tracing::Level;
 use tracing::debug;
 use tracing::info;
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt::init();
-
+    #[cfg(debug_assertions)]
+    {
+        tracing_subscriber::fmt()
+            .with_max_level(Level::DEBUG)
+            .init();
+    }
+    #[cfg(not(debug_assertions))]
+    {
+        // This might show red in IDE but it compiles,,
+        tracing_subscriber::fmt().with_max_level(Level::INFO).init();
+    }
     let config = config::config_init().await.unwrap();
     debug!("{:#?}", config);
     let oneshot_metadata = BSMetadata::get().await.unwrap();
@@ -45,39 +55,24 @@ async fn main() {
         Err(e) => info!("Couldn't set activity: {}", e),
     }
 
-    tokio::spawn(async {
-        loop {
-            // if unable to ping for any reason, exit, assuming game has quit.
-            // this spawns a new client / connection each time, kinda expensive
-            if !BSData::ping().await {
-                exit(0);
-            }
-            debug!("pinged");
-            tokio::time::sleep(Duration::from_secs(3)).await;
-        }
-    });
-
-    tokio::spawn(async move {
-        let bslivedata = BSLivedata::start().await;
-        loop {
-            tokio::time::sleep(Duration::from_secs(1)).await;
-            let mut activity = bsdata
-                .process(&config)
-                .await
-                .to_activity(bslivedata.clone().lock().await.as_ref().unwrap())
-                .await;
-            activity.timestamps.replace(Timestamps {
-                start: Some(started_at.clone().as_secs() as i64),
-                ..Default::default()
-            });
-            debug!("{:#?}", activity);
-            let activity_packet = Packet::new_activity(Some(&activity), None);
-            client.send_and_wait(activity_packet).unwrap();
-            //info!("awa");
-            //print!("{}", aw);
-            //print!("{:#?}", awa)
-            //print!()
-        }
-    });
-    loop {}
+    let bslivedata = BSLivedata::start().await;
+    loop {
+        tokio::time::sleep(Duration::from_secs(5)).await;
+        let mut activity = bsdata
+            .process(&config)
+            .await
+            .to_activity(bslivedata.clone().lock().await.as_ref().unwrap())
+            .await;
+        activity.timestamps.replace(Timestamps {
+            start: Some(started_at.clone().as_secs() as i64),
+            ..Default::default()
+        });
+        debug!("{:#?}", activity);
+        let activity_packet = Packet::new_activity(Some(&activity), None);
+        client.send_and_wait(activity_packet).unwrap();
+        //info!("awa");
+        //print!("{}", aw);
+        //print!("{:#?}", awa)
+        //print!()
+    }
 }
