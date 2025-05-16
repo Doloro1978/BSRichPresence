@@ -4,10 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     crane.url = "github:ipetkov/crane";
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -23,12 +19,10 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-
-        inherit (pkgs) lib;
-
         craneLib = crane.mkLib pkgs;
-        src = craneLib.cleanCargoSource ./.;
+        src = ./.;
         commonArgs = {
+          inherit (craneLib.crateNameFromCargoToml { src = ./BSRichPresence; }) pname version;
           inherit src;
           strictDeps = true;
           buildInputs = [
@@ -38,12 +32,10 @@
             pkgs.pkg-config
           ];
         };
-        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
         app = craneLib.buildPackage (
           commonArgs
           // {
-            inherit cargoArtifacts;
-            inherit (craneLib.crateNameFromCargoToml { inherit src; }) version;
+            cargoArtifacts = craneLib.buildDepsOnly commonArgs;
           }
         );
       in
@@ -52,9 +44,7 @@
           default = app;
           inherit app;
         };
-
         devShells.default = craneLib.devShell { };
-
       }
     );
 
