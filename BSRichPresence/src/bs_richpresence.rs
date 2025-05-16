@@ -38,12 +38,6 @@ impl RichPresence for BSProcessedData {
         activity.assets.large_image.replace("https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA14143_00/1/i_1867cbfbe18338d0089137e8e84ec6b550a97e1f62a41df7c66e1cba550b1484/i/icon0.png".to_owned());
         activity.assets.large_text.replace("In Menus..".to_owned());
 
-        activity
-                .assets
-                .small_image
-                .replace("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTN7DHy1QxOQjG-80V3URdqd_CNIzCPwfd5eQ&s".to_owned());
-        activity.assets.small_text.replace("Menu".to_owned());
-
         activity.details.replace("Sitting in menu..".to_owned());
 
         return activity;
@@ -79,11 +73,17 @@ impl RichPresence for BSProcessedData {
 
         activity.assets.small_text.replace(diff_string.to_owned());
 
-        activity.state.replace(format!(
-            "{} // Score - {}",
-            calculate_time(livedata.time_elapsed, awaw.time),
-            livedata.score
-        ));
+        let party = Party {
+            id: Some("".into()),
+            size: None,
+        };
+
+        activity
+            .state
+            .replace(format!("{}", calculate_time(livedata.time_elapsed, awaw.time)).into());
+        activity.party.replace(party);
+
+        activity.instance = true;
 
         let playing_string = format!("Playing {} {}", awaw.song_name, awaw.song_sub_name);
         activity.details.replace(playing_string);
