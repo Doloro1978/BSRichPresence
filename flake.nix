@@ -1,5 +1,5 @@
 {
-  description = "Beatsaber rich presense";
+  description = "Beatsaber rich presence";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
