@@ -57,7 +57,7 @@ async fn main() {
 
     let bslivedata = BSLivedata::start().await;
     loop {
-        tokio::time::sleep(Duration::from_secs(5)).await;
+        tokio::time::sleep(Duration::from_secs(3)).await;
         let mut activity = bsdata
             .process(&config)
             .await
