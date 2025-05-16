@@ -9,6 +9,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       crane,
       flake-utils,
@@ -41,9 +42,14 @@
         );
       in
       {
-        packages = {
-          default = app;
+        packages = rec {
           inherit app;
+          default = app;
+
+        };
+        apps = rec {
+          app = flake-utils.lib.mkApp { drv = self.packages.${system}.app; };
+          default = app;
         };
         devShells.default = craneLib.devShell { };
       }
